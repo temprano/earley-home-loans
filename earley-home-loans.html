@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Earley Home Loans — Your Clear Path Home Starts Here</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #1B2B4B;
+      --navy-mid: #2C3F63;
+      --blue: #4A6FA5;
+      --blue-light: #6B8EC4;
+      --sky: #D6E4F7;
+      --sky-pale: #EEF4FC;
+      --gold: #C9993A;
+      --gold-light: #E8B84B;
+      --white: #FFFFFF;
+      --gray: #6B7A8D;
+      --gray-light: #F4F7FB;
+      --text: #1B2B4B;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; color: var(--text); background: var(--white); overflow-x: hidden; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 48px; height: 68px;
+      background: rgba(255,255,255,0.96); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(74,111,165,0.1);
+      box-shadow: 0 2px 20px rgba(27,43,75,0.07);
+    }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-icon { width: 36px; height: 36px; background: var(--navy); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .nav-logo-icon svg { width: 20px; height: 20px; fill: var(--gold); }
+    .nav-logo-name { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; color: var(--navy); display: block; }
+    .nav-logo-sub { font-size: 10px; font-weight: 500; color: var(--blue); letter-spacing: 0.08em; text-transform: uppercase; display: block; }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a { text-decoration: none; font-size: 14px; font-weight: 500; color: var(--navy-mid); transition: color .2s; }
+    .nav-links a:hover { color: var(--blue); }
+    .nav-cta { background: var(--navy); color: var(--white); font-size: 13px; font-weight: 600; padding: 10px 22px; border-radius: 6px; text-decoration: none; transition: background .2s, transform .15s; letter-spacing: 0.02em; }
+    .nav-cta:hover { background: var(--blue); transform: translateY(-1px); }
+
+    /* HERO */
+    #hero {
+      min-height: 100vh; padding-top: 68px;
+      background: linear-gradient(160deg, var(--sky-pale) 0%, var(--sky) 50%, #C8D9F0 100%);
+      display: flex; flex-direction: column; position: relative; overflow: hidden;
+    }
+    .hero-bg-shape { position: absolute; top: -80px; right: -120px; width: 700px; height: 700px; background: radial-gradient(circle, rgba(74,111,165,0.12) 0%, transparent 70%); border-radius: 50%; pointer-events: none; }
+    .hero-bg-dots { position: absolute; bottom: 80px; left: 40px; width: 200px; height: 200px; background-image: radial-gradient(circle, rgba(74,111,165,0.25) 1.5px, transparent 1.5px); background-size: 18px 18px; pointer-events: none; }
+    .hero-inner { max-width: 1200px; margin: 0 auto; width: 100%; padding: 80px 48px 60px; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+    .hero-content { animation: fadeUp .8s ease both; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 7px; background: rgba(201,153,58,0.12); border: 1px solid rgba(201,153,58,0.3); color: var(--gold); font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 14px; border-radius: 100px; margin-bottom: 24px; }
+    .hero-title { font-family: 'Playfair Display', serif; font-size: clamp(36px, 4.5vw, 56px); font-weight: 700; line-height: 1.1; color: var(--navy); margin-bottom: 20px; }
+    .hero-title span { color: var(--blue); }
+    .hero-desc { font-size: 17px; line-height: 1.7; color: var(--gray); margin-bottom: 36px; max-width: 440px; }
+    .hero-actions { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+    .btn-primary { background: var(--navy); color: var(--white); font-size: 15px; font-weight: 600; padding: 15px 32px; border-radius: 8px; text-decoration: none; transition: background .2s, transform .15s, box-shadow .2s; box-shadow: 0 4px 20px rgba(27,43,75,0.25); }
+    .btn-primary:hover { background: var(--blue); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(27,43,75,0.3); }
+    .btn-ghost { color: var(--navy); font-size: 15px; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 8px; transition: gap .2s, color .2s; }
+    .btn-ghost:hover { gap: 13px; color: var(--blue); }
+    .btn-ghost::after { content: '→'; font-size: 18px; }
+    .hero-stats { display: flex; gap: 32px; margin-top: 48px; padding-top: 32px; border-top: 1px solid rgba(74,111,165,0.15); }
+    .stat-num { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: var(--navy); }
+    .stat-label { font-size: 12px; color: var(--gray); font-weight: 500; margin-top: 2px; }
+
+    .hero-image-area { position: relative; animation: fadeUp .8s .2s ease both; }
+    .hero-img-card { background: var(--white); border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(27,43,75,0.18); aspect-ratio: 4/3; }
+    .hero-img-placeholder { width: 100%; height: 100%; background: linear-gradient(135deg, #B8CCE8 0%, #8BAAD4 50%, #6B8EC4 100%); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+    .sun-circle { position: absolute; top: 20px; right: 30px; width: 50px; height: 50px; background: rgba(232,184,75,0.7); border-radius: 50%; box-shadow: 0 0 30px rgba(232,184,75,0.5); }
+    .ground { position: absolute; bottom: 0; width: 100%; height: 30px; background: rgba(255,255,255,0.2); border-radius: 0 0 20px 20px; }
+    .house-wrap { position: relative; width: 220px; height: 200px; }
+    .house-roof { position: absolute; bottom: 96px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 85px solid transparent; border-right: 85px solid transparent; border-bottom: 65px solid rgba(27,43,75,0.85); }
+    .house-body { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 140px; height: 100px; background: rgba(255,255,255,0.9); border-radius: 4px 4px 2px 2px; }
+    .house-door { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 34px; height: 52px; background: var(--navy); border-radius: 20px 20px 0 0; }
+    .house-window { position: absolute; width: 28px; height: 28px; background: rgba(214,228,247,0.9); border: 2px solid rgba(74,111,165,0.3); border-radius: 3px; }
+    .house-window.wl { bottom: 36px; left: calc(50% - 60px); }
+    .house-window.wr { bottom: 36px; left: calc(50% + 32px); }
+    .hero-float-card { position: absolute; background: var(--white); border-radius: 12px; padding: 14px 18px; box-shadow: 0 8px 30px rgba(27,43,75,0.15); display: flex; align-items: center; gap: 10px; }
+    .hero-float-card.c1 { bottom: -20px; left: -30px; }
+    .hero-float-card.c2 { top: 30px; right: -30px; }
+    .float-icon { width: 38px; height: 38px; background: var(--sky); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .float-label { font-size: 11px; color: var(--gray); font-weight: 500; }
+    .float-value { font-size: 15px; font-weight: 700; color: var(--navy); }
+
+    /* SHARED */
+    .section-label { text-align: center; font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue); margin-bottom: 14px; }
+    .section-title { text-align: center; font-family: 'Playfair Display', serif; font-size: clamp(26px, 3.5vw, 40px); font-weight: 700; color: var(--navy); margin-bottom: 12px; }
+    .section-desc { text-align: center; font-size: 16px; color: var(--gray); max-width: 520px; margin: 0 auto 48px; line-height: 1.7; }
+
+    /* LOAN TYPES */
+    #loan-types { padding: 80px 48px; background: var(--white); }
+    .loan-types-inner { max-width: 1200px; margin: 0 auto; }
+    .loan-cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .loan-card { background: var(--sky-pale); border: 1.5px solid rgba(74,111,165,0.12); border-radius: 16px; padding: 32px 28px; transition: transform .25s, box-shadow .25s, border-color .25s, background .25s; cursor: pointer; position: relative; overflow: hidden; }
+    .loan-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--blue), var(--blue-light)); transform: scaleX(0); transition: transform .3s; transform-origin: left; }
+    .loan-card:hover { transform: translateY(-5px); box-shadow: 0 16px 40px rgba(27,43,75,0.12); border-color: var(--blue-light); background: var(--white); }
+    .loan-card:hover::before { transform: scaleX(1); }
+    .loan-card-icon { width: 52px; height: 52px; background: var(--sky); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; font-size: 24px; }
+    .loan-card h3 { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 600; color: var(--navy); margin-bottom: 10px; }
+    .loan-card p { font-size: 14px; color: var(--gray); line-height: 1.65; margin-bottom: 20px; }
+    .loan-card-link { font-size: 13px; font-weight: 600; color: var(--blue); text-decoration: none; display: flex; align-items: center; gap: 6px; transition: gap .2s; }
+    .loan-card-link:hover { gap: 10px; }
+
+    /* SOLUTIONS */
+    #solutions { background: var(--gray-light); padding: 80px 48px; }
+    .solutions-inner { max-width: 1200px; margin: 0 auto; }
+    .solutions-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .solution-card { background: var(--white); border-radius: 14px; padding: 28px 24px; border: 1.5px solid rgba(74,111,165,0.08); transition: transform .25s, box-shadow .25s; }
+    .solution-card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(27,43,75,0.1); }
+    .solution-icon { width: 48px; height: 48px; background: var(--sky); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 16px; }
+    .solution-card h4 { font-size: 16px; font-weight: 600; color: var(--navy); margin-bottom: 8px; }
+    .solution-card p { font-size: 13px; color: var(--gray); line-height: 1.6; }
+
+    /* PARTNERS */
+    #partners { padding: 80px 48px; background: var(--white); }
+    .partners-inner { max-width: 1200px; margin: 0 auto; }
+    .partners-top { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; margin-bottom: 56px; }
+    .partners-content h2 { font-family: 'Playfair Display', serif; font-size: 34px; font-weight: 700; color: var(--navy); margin-bottom: 14px; line-height: 1.2; }
+    .partners-content p { font-size: 16px; color: var(--gray); line-height: 1.7; }
+    .partner-highlight { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%); border-radius: 16px; padding: 32px; color: var(--white); }
+    .partner-highlight h3 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 600; margin-bottom: 10px; }
+    .partner-highlight p { font-size: 14px; opacity: 0.75; line-height: 1.6; margin-bottom: 24px; }
+    .ph-stats { display: flex; gap: 28px; }
+    .ph-num { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: var(--gold-light); }
+    .ph-label { font-size: 12px; opacity: 0.65; margin-top: 2px; }
+    .partners-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .partner-card { background: var(--sky-pale); border: 1.5px solid rgba(74,111,165,0.1); border-radius: 14px; padding: 26px 22px; transition: transform .2s, box-shadow .2s; }
+    .partner-card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(27,43,75,0.1); }
+    .partner-logo-area { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .partner-logo-icon { width: 44px; height: 44px; background: var(--white); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 2px 8px rgba(27,43,75,0.08); }
+    .partner-name { font-weight: 700; font-size: 15px; color: var(--navy); }
+    .partner-desc { font-size: 13px; color: var(--gray); line-height: 1.6; }
+
+    /* ABOUT */
+    #about { background: var(--sky-pale); padding: 80px 48px; }
+    .about-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .about-visual { background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%); border-radius: 20px; padding: 48px; color: var(--white); position: relative; overflow: hidden; }
+    .about-visual::after { content: ''; position: absolute; bottom: -40px; right: -40px; width: 200px; height: 200px; background: rgba(255,255,255,0.05); border-radius: 50%; }
+    .about-visual h3 { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; margin-bottom: 14px; position: relative; z-index: 1; }
+    .about-visual > p { font-size: 15px; opacity: 0.8; line-height: 1.7; margin-bottom: 28px; position: relative; z-index: 1; }
+    .about-values { display: flex; flex-direction: column; gap: 14px; position: relative; z-index: 1; }
+    .about-value { display: flex; align-items: center; gap: 12px; font-size: 14px; font-weight: 500; }
+    .about-value::before { content: '✓'; width: 24px; height: 24px; background: rgba(201,153,58,0.3); border: 1px solid rgba(201,153,58,0.5); color: var(--gold-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
+    .about-content h2 { font-family: 'Playfair Display', serif; font-size: 34px; font-weight: 700; color: var(--navy); margin-bottom: 16px; line-height: 1.2; }
+    .about-content p { font-size: 16px; color: var(--gray); line-height: 1.7; margin-bottom: 14px; }
+    .about-team { display: flex; align-items: center; gap: 14px; margin-top: 28px; }
+    .team-avatar { width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, var(--blue-light), var(--navy)); display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; font-weight: 700; border: 3px solid white; box-shadow: 0 4px 12px rgba(27,43,75,0.15); }
+    .team-info-name { font-weight: 700; color: var(--navy); font-size: 15px; }
+    .team-info-sub { font-size: 13px; color: var(--gray); }
+
+    /* CTA */
+    #cta { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 60%, var(--blue) 100%); padding: 80px 48px; position: relative; overflow: hidden; }
+    #cta::before { content: ''; position: absolute; top: -60px; left: -60px; width: 300px; height: 300px; background: rgba(255,255,255,0.03); border-radius: 50%; }
+    .cta-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 40px; position: relative; z-index: 1; }
+    .cta-text h2 { font-family: 'Playfair Display', serif; font-size: clamp(26px, 3.5vw, 40px); font-weight: 700; color: var(--white); margin-bottom: 12px; }
+    .cta-text p { font-size: 16px; color: rgba(255,255,255,0.7); max-width: 460px; line-height: 1.6; }
+    .cta-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; flex-shrink: 0; }
+    .btn-gold { background: var(--gold); color: var(--white); font-size: 16px; font-weight: 700; padding: 17px 40px; border-radius: 8px; text-decoration: none; transition: background .2s, transform .15s, box-shadow .2s; box-shadow: 0 4px 20px rgba(201,153,58,0.4); white-space: nowrap; }
+    .btn-gold:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(201,153,58,0.5); }
+    .cta-actions span { font-size: 13px; color: rgba(255,255,255,0.5); }
+
+    /* FOOTER */
+    footer { background: var(--navy); padding: 40px 48px; }
+    .footer-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+    .footer-logo { display: flex; align-items: center; gap: 10px; }
+    .footer-logo-icon { width: 32px; height: 32px; background: rgba(255,255,255,0.1); border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+    .footer-logo-icon svg { width: 18px; height: 18px; fill: var(--gold); }
+    .footer-brand { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; color: rgba(255,255,255,0.85); }
+    .footer-copy { font-size: 13px; color: rgba(255,255,255,0.4); }
+    .footer-links { display: flex; gap: 24px; }
+    .footer-links a { font-size: 13px; color: rgba(255,255,255,0.4); text-decoration: none; transition: color .2s; }
+    .footer-links a:hover { color: rgba(255,255,255,0.8); }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity .65s ease, transform .65s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .d1 { transition-delay: .1s; }
+    .d2 { transition-delay: .2s; }
+    .d3 { transition-delay: .3s; }
+
+    /* RESPONSIVE */
+    @media (max-width: 960px) {
+      nav { padding: 0 24px; }
+      .nav-links { display: none; }
+      .hero-inner { grid-template-columns: 1fr; padding: 60px 24px 40px; gap: 48px; }
+      .hero-image-area { order: -1; }
+      .hero-float-card.c1 { bottom: -10px; left: 10px; }
+      .hero-float-card.c2 { top: 10px; right: 10px; }
+      #loan-types, #solutions, #partners, #about { padding: 60px 24px; }
+      .loan-cards-grid, .solutions-grid, .partners-grid { grid-template-columns: 1fr 1fr; }
+      .partners-top, .about-inner { grid-template-columns: 1fr; gap: 36px; }
+      #cta { padding: 60px 24px; }
+      .cta-inner { flex-direction: column; align-items: flex-start; }
+      .cta-actions { align-items: flex-start; }
+      footer { padding: 32px 24px; }
+    }
+    @media (max-width: 580px) {
+      .loan-cards-grid, .solutions-grid, .partners-grid { grid-template-columns: 1fr; }
+      .hero-stats { gap: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+    </div>
+    <div>
+      <span class="nav-logo-name">Earley Home Loans</span>
+      <span class="nav-logo-sub">Home Lending</span>
+    </div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#loan-types">Products</a></li>
+    <li><a href="#solutions">Solutions</a></li>
+    <li><a href="#partners">Lending Partners</a></li>
+    <li><a href="#about">About Us</a></li>
+  </ul>
+  <a href="#cta" class="nav-cta">Start My Application</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg-shape"></div>
+  <div class="hero-bg-dots"></div>
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="hero-badge">✦ Trusted Home Lending</div>
+      <h1 class="hero-title">Your Clear Path<br /><span>Home Starts Here.</span></h1>
+      <p class="hero-desc">Earley Home Loans connects you with the right mortgage solution — from first-time buyers to seasoned investors. Expert guidance, competitive rates, and a team that truly cares.</p>
+      <div class="hero-actions">
+        <a href="#cta" class="btn-primary">Start My Application</a>
+        <a href="#loan-types" class="btn-ghost">Explore Loan Types</a>
+      </div>
+      <div class="hero-stats">
+        <div><div class="stat-num">6+</div><div class="stat-label">Lending Partners</div></div>
+        <div><div class="stat-num">6</div><div class="stat-label">Loan Programs</div></div>
+        <div><div class="stat-num">100%</div><div class="stat-label">Client Focused</div></div>
+      </div>
+    </div>
+
+    <div class="hero-image-area">
+      <div class="hero-img-card">
+        <div class="hero-img-placeholder">
+          <div class="sun-circle"></div>
+          <div class="house-wrap">
+            <div class="house-roof"></div>
+            <div class="house-body">
+              <div class="house-window wl"></div>
+              <div class="house-window wr"></div>
+              <div class="house-door"></div>
+            </div>
+          </div>
+          <div class="ground"></div>
+        </div>
+      </div>
+      <div class="hero-float-card c1">
+        <div class="float-icon">🔑</div>
+        <div><div class="float-label">Average Close Time</div><div class="float-value">21 Days</div></div>
+      </div>
+      <div class="hero-float-card c2">
+        <div class="float-icon">📋</div>
+        <div><div class="float-label">Application</div><div class="float-value">Free & Fast</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOAN TYPES -->
+<section id="loan-types">
+  <div class="loan-types-inner">
+    <p class="section-label reveal">Loan Programs</p>
+    <h2 class="section-title reveal d1">Find the Right Loan for You</h2>
+    <p class="section-desc reveal d2">Whether you're buying your first home or investing in property, we have a mortgage solution tailored to your needs.</p>
+    <div class="loan-cards-grid">
+      <div class="loan-card reveal">
+        <div class="loan-card-icon">🏠</div>
+        <h3>Conventional & FHA</h3>
+        <p>Our most popular options for primary residences and investment properties. Low down payment options available with competitive interest rates for qualified buyers.</p>
+        <a href="#cta" class="loan-card-link">Learn more →</a>
+      </div>
+      <div class="loan-card reveal d1">
+        <div class="loan-card-icon">🎖️</div>
+        <h3>VA & USDA</h3>
+        <p>Exclusive benefits for veterans and rural buyers. Zero down payment options with flexible underwriting and our network of VA-specialist lenders.</p>
+        <a href="#cta" class="loan-card-link">Learn more →</a>
+      </div>
+      <div class="loan-card reveal d2">
+        <div class="loan-card-icon">✨</div>
+        <h3>Jumbo & Custom</h3>
+        <p>Financing solutions for high-value properties and complex financial profiles. Custom loan structures designed with our premium lending partners.</p>
+        <a href="#cta" class="loan-card-link">Learn more →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MORTGAGE SOLUTIONS -->
+<section id="solutions">
+  <div class="solutions-inner">
+    <p class="section-label reveal">Our Mortgage Solutions</p>
+    <h2 class="section-title reveal d1">Every Scenario, Covered</h2>
+    <p class="section-desc reveal d2">Find the right loan to meet your next mortgage goal — we'll help them work to your advantage.</p>
+    <div class="solutions-grid">
+      <div class="solution-card reveal">
+        <div class="solution-icon">⏱️</div>
+        <h4>Rate / Term Refinance</h4>
+        <p>Lower your rate or shorten your loan term. Reduce your monthly payment and build equity faster with a strategic refinance.</p>
+      </div>
+      <div class="solution-card reveal d1">
+        <div class="solution-icon">💰</div>
+        <h4>Cash-Out Refinance</h4>
+        <p>Tap into your home's equity for renovations, debt consolidation, or major life expenses with a cash-out refinance.</p>
+      </div>
+      <div class="solution-card reveal d2">
+        <div class="solution-icon">🏦</div>
+        <h4>Home Equity Line of Credit (HELOC)</h4>
+        <p>Flexible access to your home equity when you need it. Draw funds as needed and only pay interest on what you use.</p>
+      </div>
+      <div class="solution-card reveal">
+        <div class="solution-icon">👴</div>
+        <h4>Reverse Mortgages</h4>
+        <p>Help older homeowners access their equity without monthly payments. Stay in your home and fund your retirement goals.</p>
+      </div>
+      <div class="solution-card reveal d1">
+        <div class="solution-icon">🏡</div>
+        <h4>New Home Purchase Loan</h4>
+        <p>From pre-approval to closing, we guide first-time buyers and move-up buyers through every step of the purchase process.</p>
+      </div>
+      <div class="solution-card reveal d2">
+        <div class="solution-icon">📊</div>
+        <h4>Debt Service Coverage / Non-QM Loans</h4>
+        <p>Investment property financing and non-traditional loan products for self-employed borrowers and real estate investors.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PARTNERS -->
+<section id="partners">
+  <div class="partners-inner">
+    <div class="partners-top">
+      <div class="partners-content reveal">
+        <p class="section-label" style="text-align:left; margin-bottom:12px;">Trusted Network</p>
+        <h2>Earley Home Loans, Powered by West Capital Lending</h2>
+        <p>Our trusted lending partners are hand-selected to provide you with resources and connections with access to elite lending solutions.</p>
+      </div>
+      <div class="partner-highlight reveal d1">
+        <h3>Access to the Best Rates</h3>
+        <p>Our network of six premier lending partners means we can shop your loan across multiple institutions to secure the most competitive terms for your unique situation.</p>
+        <div class="ph-stats">
+          <div><div class="ph-num">6</div><div class="ph-label">Premier Partners</div></div>
+          <div><div class="ph-num">A+</div><div class="ph-label">Rated Lenders</div></div>
+          <div><div class="ph-num">50+</div><div class="ph-label">Loan Products</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="partners-grid">
+      <div class="partner-card reveal">
+        <div class="partner-logo-area"><div class="partner-logo-icon">🚀</div><div class="partner-name">Rocket Mortgage</div></div>
+        <p class="partner-desc">Industry-leading digital mortgage experience with consistently competitive rates and fast closings nationwide.</p>
+      </div>
+      <div class="partner-card reveal d1">
+        <div class="partner-logo-area"><div class="partner-logo-icon">🤝</div><div class="partner-name">Kind Lending</div></div>
+        <p class="partner-desc">Mission-driven lender offering innovative programs and a culture of kindness throughout the loan process.</p>
+      </div>
+      <div class="partner-card reveal d2">
+        <div class="partner-logo-area"><div class="partner-logo-icon">🏪</div><div class="partner-name">The Loan Store</div></div>
+        <p class="partner-desc">Specialized wholesale lender providing flexible and accessible mortgage products for diverse borrowers.</p>
+      </div>
+      <div class="partner-card reveal">
+        <div class="partner-logo-area"><div class="partner-logo-icon">🏛️</div><div class="partner-name">PennyMac</div></div>
+        <p class="partner-desc">One of the nation's largest lenders, offering low rates and exceptional service for homebuyers and refinancers.</p>
+      </div>
+      <div class="partner-card reveal d1">
+        <div class="partner-logo-area"><div class="partner-logo-icon">🌿</div><div class="partner-name">Mutual of Omaha</div></div>
+        <p class="partner-desc">Trusted for decades with a focus on reverse mortgages and conventional loan products for all life stages.</p>
+      </div>
+      <div class="partner-card reveal d2">
+        <div class="partner-logo-area"><div class="partner-logo-icon">👤</div><div class="partner-name">Figure Lending</div></div>
+        <p class="partner-desc">Technology-first HELOC and home equity lending with rapid approvals and a seamless digital process.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-inner">
+    <div class="about-visual reveal">
+      <h3>The Earley Standard</h3>
+      <p>Our team prioritizes three areas we feel are most important to our borrowers: education, communication, and trust. We are transparent with our community.</p>
+      <div class="about-values">
+        <div class="about-value">Education-first approach to every loan</div>
+        <div class="about-value">Clear, consistent communication</div>
+        <div class="about-value">Transparent process from start to close</div>
+        <div class="about-value">Long-term relationships, not transactions</div>
+      </div>
+    </div>
+    <div class="about-content reveal d1">
+      <p class="section-label" style="text-align:left; margin-bottom:12px;">About Us</p>
+      <h2>We're More Than Just a Lender</h2>
+      <p>Earley Home Loans was built on the belief that getting a mortgage should be a clear, empowering experience — not a confusing or stressful one.</p>
+      <p>We partner with West Capital Lending to bring you access to an elite network of lenders, ensuring you always have options and the expertise to choose wisely.</p>
+      <div class="about-team">
+        <div class="team-avatar">E</div>
+        <div><div class="team-info-name">Earley Home Loans Team</div><div class="team-info-sub">Powered by West Capital Lending</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<section id="cta">
+  <div class="cta-inner">
+    <div class="cta-text">
+      <h2>Ready to See What You Qualify For?</h2>
+      <p>Take the first step toward homeownership or your next financial goal. Our application is fast, free, and obligation-free.</p>
+    </div>
+    <div class="cta-actions">
+      <a href="#" class="btn-gold">Start My Application</a>
+      <span>No credit impact to get started</span>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">
+      <div class="footer-logo-icon"><svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></div>
+      <span class="footer-brand">Earley Home Loans</span>
+    </div>
+    <div class="footer-copy">© 2025 Earley Home Loans · Powered by West Capital Lending · Equal Housing Lender</div>
+    <div class="footer-links">
+      <a href="#">Privacy</a>
+      <a href="#">NMLS Disclosure</a>
+      <a href="#">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
