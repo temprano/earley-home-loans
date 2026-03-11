@@ -1,5 +1,6 @@
 {
-   "routes": [
-    { "src": "/", "dest": "/earley-home-loans.html" }
+  "routes": [
+    { "src": "/", "dest": "/earley-home-loans.html" },
+    { "src": "/(.*)", "dest": "/earley-home-loans.html" }
   ]
 }
