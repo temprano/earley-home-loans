@@ -28,7 +28,7 @@
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0 48px; height: 68px;
+      padding: 0 48px; height: 75px;
       background: rgba(255,255,255,0.96); backdrop-filter: blur(12px);
       border-bottom: 1px solid rgba(74,111,165,0.1);
       box-shadow: 0 2px 20px rgba(27,43,75,0.07);
@@ -43,7 +43,8 @@
     .nav-links a:hover { color: var(--blue); }
     .nav-cta { background: var(--navy); color: var(--white); font-size: 13px; font-weight: 600; padding: 10px 22px; border-radius: 6px; text-decoration: none; transition: background .2s, transform .15s; letter-spacing: 0.02em; }
     .nav-cta:hover { background: var(--blue); transform: translateY(-1px); }
-
+    .svg_wrapper { width: 100%; height: 100%; /* Make it full width */  }
+    .svg_wrapper img { width: auto; height: 100%; object-fit: cover; object-position: center; display: block;}
     /* HERO */
     #hero {
       min-height: 100vh; padding-top: 68px;
@@ -225,10 +226,11 @@
     /* Portrait phone — tall narrow screens */
     @media (max-width: 480px) and (orientation: portrait) {
       /* Nav */
-      nav { padding: 0 16px; height: 40px; }
+      nav { padding: 0px 16px; height: 60px; justify-content: center; }
       .nav-logo-name { font-size: 13px; }
       .nav-logo-sub { display: none; }
-      .nav-cta { font-size: 12px; padding: 8px 14px; }
+      .nav-cta { font-size: 12px; padding: 8px 14px; display:none; }
+      .svg_wrapper { width: 100%; aspect-ratio: 32/6; margin-left:75px; }
 
       /* Hero */
       #hero { min-height: unset; padding-top: 60px; }
@@ -273,69 +275,8 @@
 <!-- NAV -->
 <nav>
   <a href="#" class="nav-logo">
-    <div>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 80" width="340" height="80">
-  <defs>
-    <linearGradient id="roofGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#C9993A;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#E8B84B;stop-opacity:1" />
-    </linearGradient>
-    <linearGradient id="navyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#2C3F63;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#1B2B4B;stop-opacity:1" />
-    </linearGradient>
-  </defs>
-
-  <!-- ICON: Two mirrored E's forming a house shape -->
-  <!-- Roof triangle (gold) spanning both E's -->
-  <polygon points="14,35 42,8 70,35" fill="url(#roofGrad)" />
-
-  <!-- Chimney -->
-  <rect x="47" y="11" width="6" height="11" fill="url(#roofGrad)" rx="1"/>
-
-  <!-- LEFT E (normal orientation) — navy -->
-  <!-- Vertical spine -->
-  <rect x="14" y="34" width="9" height="35" fill="url(#navyGrad)" rx="1"/>
-  <!-- Top bar -->
-  <rect x="14" y="34" width="26" height="8" fill="url(#navyGrad)" rx="1"/>
-  <!-- Middle bar -->
-  <rect x="14" y="47" width="20" height="7" fill="url(#navyGrad)" rx="1"/>
-  <!-- Bottom bar -->
-  <rect x="14" y="61" width="26" height="8" fill="url(#navyGrad)" rx="1"/>
-
-  <!-- RIGHT E (mirrored) — navy -->
-  <!-- Vertical spine (right side) -->
-  <rect x="61" y="34" width="9" height="35" fill="url(#navyGrad)" rx="1"/>
-  <!-- Top bar (extends left) -->
-  <rect x="44" y="34" width="26" height="8" fill="url(#navyGrad)" rx="1"/>
-  <!-- Middle bar (extends left, shorter) -->
-  <rect x="50" y="47" width="20" height="7" fill="url(#navyGrad)" rx="1"/>
-  <!-- Bottom bar (extends left) -->
-  <rect x="44" y="61" width="26" height="8" fill="url(#navyGrad)" rx="1"/>
-
-  <!-- Door (gold) centered between both E's -->
-  <!-- <rect x="36" y="55" width="12" height="14" fill="url(#roofGrad)" rx="2"/> -->
-
-  <!-- WORDMARK -->
-  <text x="92" y="52"
-    font-family="Arial, 'Tohoma', serif"
-    font-size="32"
-    font-weight="700"
-    letter-spacing="2"
-    fill="#1B2B4B">EARLEY</text>
-
-  <!-- Gold underline -->
-  <rect x="72" y="57" width="192" height="2" fill="url(#roofGrad)" rx="1"/>
-
-  <!-- HOME LOANS subtext -->
-  <text x="98" y="72"
-    font-family="Arial, 'Tohoma', serif"
-    font-size="12"
-    font-weight="400"
-    letter-spacing="4"
-    fill="#4A6FA5">HOME LOANS</text>
-
-</svg>
+  <div class="svg_wrapper">
+      <img src="./asset/logo.jpg" />
     </div>
     
   </a>
