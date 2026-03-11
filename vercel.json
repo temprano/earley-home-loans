@@ -1,6 +1,5 @@
 {
-  "rootDirectory": "frontend",
-  "routes": [
+   "routes": [
     { "src": "/", "dest": "/earley-home-loans.html" }
   ]
 }
