@@ -480,8 +480,8 @@
       <h2>Ready to See What You Qualify For?</h2>
       <p>Take the first step toward homeownership or your next financial goal. Our application is fast, free, and obligation-free.</p>
     </div>
-    <div class="cta-actions">
-      <a href="#" class="btn-gold">Start My Application</a>
+      <div class="cta-actions">
+      <button onclick="openModal()" class="btn-gold" style="border:none;cursor:pointer;">Request a Free Consultation</button>
       <span>No credit impact to get started</span>
     </div>
   </div>
@@ -504,11 +504,114 @@
 </footer>
 
 <script>
+  // ── Scroll reveal ────────────────────────────────────────
   const reveals = document.querySelectorAll('.reveal');
   const observer = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
   }, { threshold: 0.1 });
   reveals.forEach(el => observer.observe(el));
+
+  // ── Modal ────────────────────────────────────────────────
+  const overlay   = document.getElementById('consultModal');
+  const closeBtn  = document.getElementById('modalClose');
+
+  function openModal() {
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    // Set min date to today
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('c-date').min = today;
+  }
+
+  function closeModal() {
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  // Close on overlay click
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+  closeBtn.addEventListener('click', closeModal);
+
+  // Close on Escape key
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  // ── Form validation ──────────────────────────────────────
+  function setError(id, show) {
+    const group = document.getElementById(id).closest('.form-group');
+    const input = document.getElementById(id);
+    group.classList.toggle('has-error', show);
+    input.classList.toggle('error', show);
+  }
+
+  function validateForm() {
+    let valid = true;
+
+    const name  = document.getElementById('c-name').value.trim();
+    const email = document.getElementById('c-email').value.trim();
+    const topic = document.getElementById('c-topic').value;
+
+    if (!name) { setError('c-name', true); valid = false; } else { setError('c-name', false); }
+    if (!email || !/\S+@\S+\.\S+/.test(email)) { setError('c-email', true); valid = false; } else { setError('c-email', false); }
+    if (!topic) { setError('c-topic', true); valid = false; } else { setError('c-topic', false); }
+
+    return valid;
+  }
+
+  // ── Form submission ──────────────────────────────────────
+  // ⚠️  Replace with your actual backend URL before going live
+  const API_BASE = 'http://localhost:3001';
+
+  document.getElementById('consultSubmit').addEventListener('click', async () => {
+    if (!validateForm()) return;
+
+    const btn      = document.getElementById('consultSubmit');
+    const apiError = document.getElementById('form-api-error');
+    apiError.style.display = 'none';
+
+    btn.classList.add('loading');
+    btn.disabled = true;
+
+    const payload = {
+      full_name:      document.getElementById('c-name').value.trim(),
+      email:          document.getElementById('c-email').value.trim(),
+      phone:          document.getElementById('c-phone').value.trim() || undefined,
+      preferred_date: document.getElementById('c-date').value || undefined,
+      preferred_time: document.getElementById('c-time').value || undefined,
+      topic:          document.getElementById('c-topic').value,
+      message:        document.getElementById('c-message').value.trim() || undefined
+    };
+
+    try {
+      const res  = await fetch(`${API_BASE}/api/consultations`, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Something went wrong. Please try again.');
+      }
+
+      // Show success state
+      document.getElementById('modalHeader').classList.add('hide');
+      document.getElementById('modalBody').classList.add('hide');
+      document.getElementById('modalSuccess').classList.add('show');
+
+    } catch (err) {
+      apiError.textContent = err.message;
+      apiError.style.display = 'block';
+    } finally {
+      btn.classList.remove('loading');
+      btn.disabled = false;
+    }
+  });
+
+  // Clear errors on input
+  ['c-name','c-email','c-topic'].forEach(id => {
+    document.getElementById(id).addEventListener('input', () => setError(id, false));
+  });
 </script>
 </body>
 </html>
