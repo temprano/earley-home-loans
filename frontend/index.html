@@ -322,8 +322,182 @@
     .btn-submit.loading .btn-label { display: none; }
     @keyframes spin { to { transform: rotate(360deg); } }
   </style>
+
+  
+
+  /* CALCULATOR MODAL */
+  <style>
+    #calcModal .modal { max-width: 680px; }
+    .calc-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 4px; }
+    .calc-input-full { grid-column: 1 / -1; }
+    .calc-range-wrap { position: relative; }
+    .calc-range-wrap input[type=range] {
+      width: 100%; height: 6px; -webkit-appearance: none; appearance: none;
+      background: var(--sky); border-radius: 3px; outline: none; cursor: pointer; margin-top: 8px;
+    }
+    .calc-range-wrap input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 20px; height: 20px;
+      background: var(--navy); border-radius: 50%; cursor: pointer;
+      box-shadow: 0 2px 6px rgba(27,43,75,0.3);
+    }
+    .calc-range-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--gray); margin-top: 4px; }
+    .calc-result-box {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+      border-radius: 14px; padding: 24px 28px; margin: 20px 0 0;
+      display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+    }
+    .calc-result-main {}
+    .calc-result-label { font-size: 12px; color: rgba(255,255,255,0.6); font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
+    .calc-result-amount { font-family: 'Playfair Display', serif; font-size: 40px; font-weight: 700; color: var(--white); line-height: 1; }
+    .calc-result-sub { font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 6px; }
+    .calc-result-breakdown { display: flex; gap: 24px; }
+    .calc-result-item {}
+    .calc-result-item-label { font-size: 11px; color: rgba(255,255,255,0.5); margin-bottom: 2px; }
+    .calc-result-item-val { font-size: 16px; font-weight: 700; color: var(--gold-light); }
+    .calc-divider { width: 1px; background: rgba(255,255,255,0.1); }
+
+    /* Amortization table */
+    .amort-toggle {
+      width: 100%; background: none; border: 1.5px solid rgba(74,111,165,0.2);
+      border-radius: 8px; padding: 10px 16px; font-family: 'DM Sans', sans-serif;
+      font-size: 14px; font-weight: 600; color: var(--blue); cursor: pointer;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: background .2s, border-color .2s; margin-top: 16px;
+    }
+    .amort-toggle:hover { background: var(--sky-pale); border-color: var(--blue); }
+    .amort-toggle .arrow { transition: transform .25s; font-size: 12px; }
+    .amort-toggle.open .arrow { transform: rotate(180deg); }
+
+    .amort-wrap { display: none; margin-top: 12px; border-radius: 10px; overflow: hidden; border: 1.5px solid rgba(74,111,165,0.1); }
+    .amort-wrap.show { display: block; }
+    .amort-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .amort-table thead tr { background: var(--navy); color: white; }
+    .amort-table thead th { padding: 10px 14px; text-align: right; font-weight: 600; font-size: 12px; letter-spacing: 0.04em; }
+    .amort-table thead th:first-child { text-align: left; }
+    .amort-table tbody tr { border-bottom: 1px solid rgba(74,111,165,0.07); transition: background .15s; }
+    .amort-table tbody tr:hover { background: var(--sky-pale); }
+    .amort-table tbody td { padding: 9px 14px; text-align: right; color: var(--navy); }
+    .amort-table tbody td:first-child { text-align: left; font-weight: 600; color: var(--blue); }
+    .amort-table tbody td.interest-col { color: var(--gray); }
+    .amort-scroll { max-height: 260px; overflow-y: auto; }
+
+    .calc-cta { margin-top: 20px; text-align: center; }
+    .calc-cta p { font-size: 13px; color: var(--gray); margin-bottom: 10px; }
+
+    @media (max-width: 480px) {
+      .calc-inputs { grid-template-columns: 1fr; }
+      .calc-result-box { flex-direction: column; gap: 16px; }
+      .calc-result-amount { font-size: 32px; }
+      #calcModal .modal { max-width: 100%; }
+    }
+  </style>
 </head>
 <body>
+
+<!-- CALCULATOR MODAL -->
+<div class="modal-overlay" id="calcModal" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-header-text">
+        <h2>Mortgage Calculator</h2>
+        <p>Estimate your monthly principal &amp; interest payment.</p>
+      </div>
+      <button class="modal-close" id="calcClose" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <div class="calc-inputs">
+        <!-- Home Price -->
+        <div class="form-group calc-input-full">
+          <label for="calc-price">Home Price — <span id="price-display" style="color:var(--blue);font-weight:700;">$400,000</span></label>
+          <div class="calc-range-wrap">
+            <input type="range" id="calc-price" min="50000" max="2000000" step="5000" value="400000" />
+            <div class="calc-range-label"><span>$50K</span><span>$2M</span></div>
+          </div>
+        </div>
+
+        <!-- Down Payment -->
+        <div class="form-group">
+          <label for="calc-down">Down Payment — <span id="down-display" style="color:var(--blue);font-weight:700;">20%</span></label>
+          <div class="calc-range-wrap">
+            <input type="range" id="calc-down" min="3" max="50" step="1" value="20" />
+            <div class="calc-range-label"><span>3%</span><span>50%</span></div>
+          </div>
+        </div>
+
+        <!-- Loan Term -->
+        <div class="form-group">
+          <label for="calc-term">Loan Term</label>
+          <select id="calc-term">
+            <option value="30">30 Years (Fixed)</option>
+            <option value="20">20 Years (Fixed)</option>
+            <option value="15">15 Years (Fixed)</option>
+            <option value="10">10 Years (Fixed)</option>
+          </select>
+        </div>
+
+        <!-- Interest Rate -->
+        <div class="form-group calc-input-full">
+          <label for="calc-rate">Interest Rate — <span id="rate-display" style="color:var(--blue);font-weight:700;">7.0%</span></label>
+          <div class="calc-range-wrap">
+            <input type="range" id="calc-rate" min="2" max="15" step="0.1" value="7.0" />
+            <div class="calc-range-label"><span>2%</span><span>15%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Result box -->
+      <div class="calc-result-box" id="calc-result">
+        <div class="calc-result-main">
+          <div class="calc-result-label">Monthly Payment</div>
+          <div class="calc-result-amount" id="monthly-payment">$2,129</div>
+          <div class="calc-result-sub" id="loan-amount-sub">Loan amount: $320,000</div>
+        </div>
+        <div class="calc-result-breakdown">
+          <div class="calc-result-item">
+            <div class="calc-result-item-label">Total Interest</div>
+            <div class="calc-result-item-val" id="total-interest">$446,487</div>
+          </div>
+          <div class="calc-divider"></div>
+          <div class="calc-result-item">
+            <div class="calc-result-item-label">Total Cost</div>
+            <div class="calc-result-item-val" id="total-cost">$766,487</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Amortization toggle -->
+      <button class="amort-toggle" id="amort-toggle">
+        <span>View Year-by-Year Amortization</span>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="amort-wrap" id="amort-wrap">
+        <div class="amort-scroll">
+          <table class="amort-table">
+            <thead>
+              <tr>
+                <th>Year</th>
+                <th>Principal</th>
+                <th>Interest</th>
+                <th>Balance</th>
+              </tr>
+            </thead>
+            <tbody id="amort-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="calc-cta">
+        <p>Ready to explore your real rate with a lender?</p>
+        <button class="btn-submit" style="max-width:260px;" onclick="openModal()">
+          <span class="btn-label">Request a Free Consultation</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
 <!-- CONSULTATION MODAL -->
 <div class="modal-overlay" id="consultModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
   <div class="modal">
@@ -431,7 +605,10 @@
     <li><a href="#partners">Lending Partners</a></li>
     <li><a href="#about">About Us</a></li>
   </ul>
-  <button onclick="openModal()" class="nav-cta">Request Consultation</button>
+   <div style="display:flex; gap:8px;">
+      <button onclick="openCalc()" class="nav-cta">Calculate My Payments</button>
+      <button onclick="openModal()" class="nav-cta">Request Consultation</button>
+    </div>
 </nav>
 
 <!-- HERO -->
@@ -445,7 +622,8 @@
       <p class="hero-desc">Earley Home Loans connects you with the right mortgage solution — from first-time buyers to seasoned investors. Expert guidance, competitive rates, and a team that truly cares.</p>
       <div class="hero-actions">
         <a href="#cta" class="btn-primary">Start My Application</a>
-        <a href="#loan-types" class="btn-ghost">Explore Loan Types</a>
+         <button onclick="openModal()" class="btn-ghost" style="background:none;border:none;cursor:pointer;">Free Consultation</button>
+        
       </div>
       <div class="hero-stats">
         <div><div class="stat-num">6+</div><div class="stat-label">Lending Partners</div></div>
@@ -766,6 +944,101 @@
     document.getElementById(id).addEventListener('input', () => setError(id, false));
   });
   }); // end DOMContentLoaded
+  // ── Calculator ───────────────────────────────────────────
+  window.openCalc = function() {
+    document.getElementById('calcModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    calcUpdate();
+  };
+
+  window.closeCalc = function() {
+    document.getElementById('calcModal').classList.remove('open');
+    document.body.style.overflow = '';
+  };
+
+  function fmt(n) {
+    return '$' + Math.round(n).toLocaleString('en-US');
+  }
+
+  function calcUpdate() {
+    const price    = parseFloat(document.getElementById('calc-price').value);
+    const downPct  = parseFloat(document.getElementById('calc-down').value);
+    const termYrs  = parseInt(document.getElementById('calc-term').value);
+    const annRate  = parseFloat(document.getElementById('calc-rate').value);
+
+    const downAmt  = price * (downPct / 100);
+    const principal = price - downAmt;
+    const months   = termYrs * 12;
+    const r        = (annRate / 100) / 12;
+
+    // Monthly payment formula
+    let monthly;
+    if (r === 0) {
+      monthly = principal / months;
+    } else {
+      monthly = principal * (r * Math.pow(1 + r, months)) / (Math.pow(1 + r, months) - 1);
+    }
+
+    const totalCost     = monthly * months;
+    const totalInterest = totalCost - principal;
+
+    // Update display labels
+    document.getElementById('price-display').textContent = fmt(price);
+    document.getElementById('down-display').textContent  = downPct + '% (' + fmt(downAmt) + ')';
+    document.getElementById('rate-display').textContent  = annRate.toFixed(1) + '%';
+
+    // Update result box
+    document.getElementById('monthly-payment').textContent  = fmt(monthly);
+    document.getElementById('loan-amount-sub').textContent  = 'Loan amount: ' + fmt(principal);
+    document.getElementById('total-interest').textContent   = fmt(totalInterest);
+    document.getElementById('total-cost').textContent       = fmt(totalCost);
+
+    // Build amortization table (yearly)
+    let balance = principal;
+    let tbody = '';
+    for (let yr = 1; yr <= termYrs; yr++) {
+      let yearPrincipal = 0;
+      let yearInterest  = 0;
+      for (let mo = 0; mo < 12; mo++) {
+        const intPayment  = balance * r;
+        const prinPayment = Math.min(monthly - intPayment, balance);
+        yearInterest  += intPayment;
+        yearPrincipal += prinPayment;
+        balance       -= prinPayment;
+        if (balance < 0.01) balance = 0;
+      }
+      tbody += '<tr>' +
+        '<td>Year ' + yr + '</td>' +
+        '<td>' + fmt(yearPrincipal) + '</td>' +
+        '<td class="interest-col">' + fmt(yearInterest) + '</td>' +
+        '<td>' + fmt(Math.max(0, balance)) + '</td>' +
+        '</tr>';
+      if (balance <= 0) break;
+    }
+    document.getElementById('amort-body').innerHTML = tbody;
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // Calc modal close
+    const calcOverlay = document.getElementById('calcModal');
+    document.getElementById('calcClose').addEventListener('click', window.closeCalc);
+    calcOverlay.addEventListener('click', e => { if (e.target === calcOverlay) window.closeCalc(); });
+
+    // Amortization toggle
+    const amortToggle = document.getElementById('amort-toggle');
+    amortToggle.addEventListener('click', () => {
+      amortToggle.classList.toggle('open');
+      document.getElementById('amort-wrap').classList.toggle('show');
+    });
+
+    // Live update on all inputs
+    ['calc-price','calc-down','calc-rate','calc-term'].forEach(id => {
+      document.getElementById(id).addEventListener('input', calcUpdate);
+    });
+
+    // Initial calculation
+    calcUpdate();
+  });
 </script>
 </body>
 </html>
