@@ -269,9 +269,154 @@
       .footer-copy { font-size: 11px; }
     }
   </style>
+  <style>
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(27,43,75,0.6); backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center; padding: 20px;
+      opacity: 0; pointer-events: none; transition: opacity .25s ease;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--white); border-radius: 20px;
+      width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto;
+      box-shadow: 0 32px 80px rgba(27,43,75,0.25);
+      transform: translateY(20px) scale(0.98); transition: transform .3s ease; position: relative;
+    }
+    .modal-overlay.open .modal { transform: translateY(0) scale(1); }
+    .modal-header { padding: 32px 32px 0; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+    .modal-header h2 { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+    .modal-header p { font-size: 14px; color: var(--gray); line-height: 1.5; }
+    .modal-close { width: 36px; height: 36px; flex-shrink: 0; background: var(--gray-light); border: none; border-radius: 8px; cursor: pointer; font-size: 18px; color: var(--gray); display: flex; align-items: center; justify-content: center; transition: background .2s, color .2s; }
+    .modal-close:hover { background: var(--sky); color: var(--navy); }
+    .modal-body { padding: 24px 32px 32px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    .form-group label { font-size: 13px; font-weight: 600; color: var(--navy); }
+    .form-group label span { color: var(--gold); }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 11px 14px;
+      border: 1.5px solid rgba(74,111,165,0.2); border-radius: 8px;
+      font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--navy);
+      background: var(--white); transition: border-color .2s, box-shadow .2s; outline: none; -webkit-appearance: none;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(74,111,165,0.1); }
+    .form-group input.error, .form-group select.error, .form-group textarea.error { border-color: #E05252; }
+    .form-group .error-msg { font-size: 12px; color: #E05252; display: none; }
+    .form-group.has-error .error-msg { display: block; }
+    .form-group textarea { resize: vertical; min-height: 90px; line-height: 1.5; }
+    .form-group select { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B7A8D' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+    .form-divider { height: 1px; background: rgba(74,111,165,0.1); margin: 20px 0; }
+    .btn-submit { width: 100%; padding: 14px; background: var(--navy); color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600; border: none; border-radius: 8px; cursor: pointer; transition: background .2s, transform .15s, box-shadow .2s; box-shadow: 0 4px 16px rgba(27,43,75,0.2); display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 20px; }
+    .btn-submit:hover { background: var(--blue); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(27,43,75,0.25); }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .form-note { font-size: 12px; color: var(--gray); text-align: center; margin-top: 12px; }
+    .modal-success { display: none; flex-direction: column; align-items: center; justify-content: center; padding: 48px 32px; text-align: center; }
+    .modal-success.show { display: flex; }
+    .modal-body.hide, .modal-header.hide { display: none; }
+    .success-icon { width: 64px; height: 64px; background: linear-gradient(135deg, #4CAF8A, #2E9E6E); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 20px; box-shadow: 0 8px 24px rgba(46,158,110,0.3); }
+    .modal-success h3 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--navy); margin-bottom: 10px; }
+    .modal-success p { font-size: 15px; color: var(--gray); line-height: 1.6; max-width: 360px; margin-bottom: 24px; }
+    .spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin .7s linear infinite; display: none; }
+    .btn-submit.loading .spinner { display: block; }
+    .btn-submit.loading .btn-label { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
 </head>
 <body>
+<!-- CONSULTATION MODAL -->
+<div class="modal-overlay" id="consultModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal">
 
+    <!-- Header -->
+    <div class="modal-header" id="modalHeader">
+      <div class="modal-header-text">
+        <h2 id="modalTitle">Request a Consultation</h2>
+        <p>Fill out the form below and we'll reach out to schedule your free consultation.</p>
+      </div>
+      <button class="modal-close" id="modalClose" aria-label="Close">✕</button>
+    </div>
+
+    <!-- Form -->
+    <div class="modal-body" id="modalBody">
+      <div class="form-row" style="margin-bottom:0;">
+        <div class="form-group">
+          <label for="c-name">Full Name <span>*</span></label>
+          <input type="text" id="c-name" placeholder="Jane Smith" autocomplete="name" />
+          <span class="error-msg">Please enter your full name</span>
+        </div>
+        <div class="form-group">
+          <label for="c-email">Email Address <span>*</span></label>
+          <input type="email" id="c-email" placeholder="jane@example.com" autocomplete="email" />
+          <span class="error-msg">Please enter a valid email</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="c-phone">Phone Number</label>
+        <input type="tel" id="c-phone" placeholder="(602) 555-0100" autocomplete="tel" />
+      </div>
+
+      <div class="form-divider"></div>
+
+      <div class="form-row" style="margin-bottom:0;">
+        <div class="form-group">
+          <label for="c-date">Preferred Date</label>
+          <input type="date" id="c-date" />
+        </div>
+        <div class="form-group">
+          <label for="c-time">Preferred Time</label>
+          <select id="c-time">
+            <option value="">Select a time</option>
+            <option value="Morning (9am–12pm)">Morning (9am–12pm)</option>
+            <option value="Afternoon (12pm–3pm)">Afternoon (12pm–3pm)</option>
+            <option value="Late Afternoon (3pm–5pm)">Late Afternoon (3pm–5pm)</option>
+            <option value="Evening (5pm–7pm)">Evening (5pm–7pm)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="c-topic">Topic <span>*</span></label>
+        <select id="c-topic">
+          <option value="">What would you like to discuss?</option>
+          <option value="Home Purchase">Home Purchase</option>
+          <option value="Refinance">Refinance</option>
+          <option value="HELOC / Cash-Out">HELOC / Cash-Out</option>
+          <option value="VA / USDA Loan">VA / USDA Loan</option>
+          <option value="Reverse Mortgage">Reverse Mortgage</option>
+          <option value="Investment Property">Investment Property</option>
+          <option value="General Question">General Question</option>
+        </select>
+        <span class="error-msg">Please select a topic</span>
+      </div>
+
+      <div class="form-group">
+        <label for="c-message">Message</label>
+        <textarea id="c-message" placeholder="Tell us a bit about your situation or any questions you have..."></textarea>
+      </div>
+
+      <div id="form-api-error" style="display:none; background:#FEF2F2; border:1px solid #FECACA; color:#C0392B; font-size:13px; padding:10px 14px; border-radius:8px; margin-top:8px;"></div>
+
+      <button class="btn-submit" id="consultSubmit">
+        <span class="btn-label">Request Consultation</span>
+        <div class="spinner"></div>
+      </button>
+      <p class="form-note">🔒 Your information is secure and never shared with third parties.</p>
+    </div>
+
+    <!-- Success state -->
+    <div class="modal-success" id="modalSuccess">
+      <div class="success-icon">✓</div>
+      <h3>Request Received!</h3>
+      <p>Thank you! We'll review your request and reach out within one business day to confirm your consultation.</p>
+      <button class="btn-submit" style="max-width:200px;" onclick="closeModal()">
+        <span class="btn-label">Done</span>
+      </button>
+    </div>
+
+  </div>
+</div>
 <!-- NAV -->
 <nav>
   <a href="#" class="nav-logo">
@@ -286,7 +431,7 @@
     <li><a href="#partners">Lending Partners</a></li>
     <li><a href="#about">About Us</a></li>
   </ul>
-  <a href="#cta" class="nav-cta">Start My Application</a>
+  <button onclick="openModal()" class="nav-cta">Request Consultation</button>
 </nav>
 
 <!-- HERO -->
@@ -512,29 +657,37 @@
   reveals.forEach(el => observer.observe(el));
 
   // ── Modal ────────────────────────────────────────────────
-  const overlay   = document.getElementById('consultModal');
-  const closeBtn  = document.getElementById('modalClose');
-
-  function openModal() {
+  // Declare in window scope so onclick attributes can reach them
+  window.openModal = function() {
+    const overlay = document.getElementById('consultModal');
+    if (!overlay) return;
     overlay.classList.add('open');
     document.body.style.overflow = 'hidden';
-    // Set min date to today
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('c-date').min = today;
-  }
+  };
 
-  function closeModal() {
+  window.closeModal = function() {
+    const overlay = document.getElementById('consultModal');
+    if (!overlay) return;
     overlay.classList.remove('open');
     document.body.style.overflow = '';
-  }
+  };
 
-  // Close on overlay click
-  overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
-  closeBtn.addEventListener('click', closeModal);
+  document.addEventListener('DOMContentLoaded', () => {
+    const overlay  = document.getElementById('consultModal');
+    const closeBtn = document.getElementById('modalClose');
+    if (!overlay || !closeBtn) return;
 
-  // Close on Escape key
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+    // Close on overlay backdrop click
+    overlay.addEventListener('click', e => { if (e.target === overlay) window.closeModal(); });
+    closeBtn.addEventListener('click', window.closeModal);
 
+    // Close on Escape key
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') window.closeModal(); });
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
   // ── Form validation ──────────────────────────────────────
   function setError(id, show) {
     const group = document.getElementById(id).closest('.form-group');
@@ -612,6 +765,7 @@
   ['c-name','c-email','c-topic'].forEach(id => {
     document.getElementById(id).addEventListener('input', () => setError(id, false));
   });
+  }); // end DOMContentLoaded
 </script>
 </body>
 </html>
